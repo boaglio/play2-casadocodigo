@@ -8,5 +8,6 @@ public class Inicio extends Controller {
 	public static Result index() {
 
 		return ok(views.html.inicio.render());
+
 	}
 }

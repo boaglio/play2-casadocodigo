@@ -11,6 +11,19 @@
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
     </head>
     <body>
+
+        @if(flash.containsKey("sucesso")) {
+         <div class="alert alert-success">
+          @flash.get("sucesso")
+         </div>
+        }
+
+       @if(flash.containsKey("erro")) {
+         <div class="alert alert-danger">
+          @flash.get("erro")
+         </div>
+        }
+
         @content
     </body>
 </html>

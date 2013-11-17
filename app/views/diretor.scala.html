@@ -1,0 +1,24 @@
+@(diretores: List[Diretor])
+
+@main("Diretores") {
+
+    <div class="container">
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+	      <li class="active"><a href="@routes.DiretorCRUD.novoDiretor()">Novo diretor</a></li>
+          <li class="active"><a href="/">Home</a></li>
+        </ul>
+        <h3 class="text-muted">Diretores</h3>
+      </div>
+     <table class="table table-striped table-bordered" id="example" cellpadding="0" cellspacing="0" border="0" width="100%">
+	    <tfoot>
+	      @for(diretor <- diretores) {
+	        <tr>
+	            <th><a href="@routes.DiretorCRUD.detalhar(diretor.id)">@diretor.nome</a></th>
+	        </tr>
+	             }
+	    </tfoot>
+	   </table>
+      </div>
+
+}

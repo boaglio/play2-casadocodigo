@@ -1,0 +1,38 @@
+@(id: Long, diretorForm: Form[Diretor])
+
+@import helper._
+
+@main("Alterar diretor") {
+
+   <div class="container">
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/">Home</a></li>
+        </ul>
+      </div>
+
+    <h1>Alterar diretor</h1>
+
+    @form(routes.DiretorCRUD.alterar(id)) {
+
+     <fieldset>@inputText(diretorForm("nome"), '_label -> "Nome do diretor")</fieldset>
+
+      <div class="control-group">
+        <div class="actions">
+
+            <input type="submit" value="Gravar" class="btn btn-primary">
+
+            <a href="@routes.DiretorCRUD.lista()" class="btn btn-primary ">Cancelar</a>
+
+    }
+
+    @form(routes.DiretorCRUD.remover(id)) {
+            <input type="submit" value="Remover esse diretor" class="btn danger">
+    }
+
+        </div>
+      </div>
+
+</div>
+
+}
