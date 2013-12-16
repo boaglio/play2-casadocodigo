@@ -1,0 +1,38 @@
+@(id: Long, filmeForm: Form[Filme])
+
+@import helper._
+
+@main("Alterar filme") {
+
+   <div class="container">
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/">Home</a></li>
+        </ul>
+      </div>
+
+    <h1>Alterar filme</h1>
+
+    @form(routes.FilmeCRUD.alterar(id)) {
+
+     <fieldset>@inputText(filmeForm("nome"), '_label -> "Nome do filme")</fieldset>
+
+      <div class="control-group">
+        <div class="actions">
+
+            <input type="submit" value="Gravar" class="btn btn-primary">
+
+            <a href="@routes.FilmeCRUD.lista()" class="btn btn-primary ">Cancelar</a>
+
+    }
+
+    @form(routes.FilmeCRUD.remover(id)) {
+            <input type="submit" value="Remover esse filme" class="btn danger">
+    }
+
+        </div>
+      </div>
+
+</div>
+
+}

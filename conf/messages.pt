@@ -1,0 +1,17 @@
+#
+# Mensagens
+#
+
+# globais
+global.home=Home
+global.erro=Erro interno do sistema
+
+# filme
+filme.duracao=Duração
+filme.novo=Novo filme
+filme.ano=Ano
+filme.nome=Filme
+filme.diretor=Diretor
+filme.nome.hint=informe o nome do filme
+filme.genero=Gênero
+filme.gravar=Gravar

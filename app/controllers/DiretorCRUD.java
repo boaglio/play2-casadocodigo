@@ -20,8 +20,12 @@ public class DiretorCRUD extends Controller {
 	}
 
 	public static Result remover(Long id) {
-		Diretor.find.ref(id).delete();
-		flash("sucesso","Diretor removido com sucesso");
+		try {
+			Diretor.find.ref(id).delete();
+			flash("sucesso","Diretor removido com sucesso");
+		} catch (Exception e) {
+			flash("erro",play.i18n.Messages.get("global.erro"));
+		}
 		return lista();
 	}
 
@@ -56,7 +60,7 @@ public class DiretorCRUD extends Controller {
 		}
 		Diretor diretor = form.get();
 		diretor.save();
-		// form.get().save();
+		// ou form.get().save();
 		flash("sucesso","Registro gravado com sucesso");
 
 		return redirect(routes.DiretorCRUD.lista());

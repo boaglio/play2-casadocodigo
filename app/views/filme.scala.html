@@ -1,0 +1,38 @@
+@(filmes: List[Filme])
+
+@main("Filmes") {
+
+    <div class="container">
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+	      <li class="active"><a href="@routes.FilmeCRUD.novoFilme()">Novo filme</a></li>
+          <li class="active"><a href="/">Home</a></li>
+        </ul>
+        <h3 class="text-muted">Filmes</h3>
+      </div>
+     <table class="table table-striped table-bordered" id="example" cellpadding="0" cellspacing="0" border="0" width="100%">
+	    <tfoot>
+	          <tr>
+	            <th>ano</th>
+	            <th>filme</th>
+ 	            <th>diretor</th>
+	            <th>dura&ccedil;&atilde;o</th>
+	            <th>g&ecirc;nero</th>
+  	            <th>IMDB</th>
+	        </tr>
+
+	      @for(filme <- filmes) {
+	        <tr>
+	            <td>@filme.ano</td>
+	            <td><a href="@routes.FilmeCRUD.detalhar(filme.id)">@filme.nome</a></td>
+ 	            <td>@filme.diretor</td>
+	            <td>@filme.duracao</td>
+	            <td>@filme.genero</td>
+  	            <td nowrap="nowrap"><a href="@filme.url" target="_BLANK">nota: @filme.nota com @filme.votos votos</td>
+	        </tr>
+	             }
+	    </tfoot>
+	   </table>
+      </div>
+
+}
