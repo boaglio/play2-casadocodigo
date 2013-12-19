@@ -24,3 +24,6 @@ GET     /filme/:id               controllers.FilmeCRUD.detalhar(id: Long)
 POST   /filme/:id              controllers.FilmeCRUD.alterar(id:Long)
 POST   /filme/                     controllers.FilmeCRUD.gravar()
 POST   /filme/:id/remover       controllers.FilmeCRUD.remover(id:Long)
+
+GET     /filmesJSON            controllers.Services.listaFilmesEmJSON()
+GET     /filmesXML             controllers.Services.listaFilmesEmXML()

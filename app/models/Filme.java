@@ -50,4 +50,10 @@ public class Filme extends Model {
 		}
 		return options;
 	}
+
+	@Override
+	public String toString() {
+		return nome;
+	}
+
 }
