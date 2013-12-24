@@ -24,6 +24,10 @@ CREATE TABLE filmes_cult
 );
 
 
+create sequence filmes_cult_seq start with 200 ;
+
+create sequence diretor_seq start with 200 ;
+
 
 INSERT INTO diretor (id,nome) VALUES (1,'Adrian Lyne');
 INSERT INTO diretor (id,nome) VALUES (2,'Agustín Villaronga');
