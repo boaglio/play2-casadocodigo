@@ -60,7 +60,7 @@ public class FilmeCRUD extends Controller {
 
 			List<Diretor> diretores = Diretor.find.findList();
 
-			return badRequest(views.html.novoFilme.render(filmeForm,diretores));
+			return ok(views.html.novoFilme.render(filmeForm,diretores));
 		}
 
 		form.get().save();
