@@ -1,11 +1,8 @@
 @(filmes: List[Filme])
 
-
-
-
-
 @main("Filmes") {
 
+<img src="http://localhost:9000/filmeImagem?id=32"/>
 
 <div id="fb-root"></div>
 <script>
@@ -71,6 +68,10 @@
 	      @for(filme <- filmes) {
 	        <tr>
 	            <td>@filme.ano</td>
+  	            <td>
+	             <a href="@routes.FilmeCRUD.detalhar(filme.id)">@filme.nome</a>
+	             <img src="@routes.FilmeCRUD.imagem(filme.id)" alt="">
+	            </td>
 	            <td><a href="@routes.FilmeCRUD.detalhar(filme.id)">@filme.nome</a></td>
  	            <td>@filme.diretor</td>
 	            <td>@filme.duracao</td>
@@ -80,6 +81,34 @@
 	             }
 	    </tfoot>
 	   </table>
+
+	   	   <br/>
+	   <br/>
+		     @helper.form(action = routes.FilmeCRUD.upload(), 'enctype -> "multipart/form-data") {
+	    <table class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0" width="100%">
+	      <tr>
+	       <th>Escolha o filme</th>
+		   <td>
+			<select name="filmeId" >
+			 @for(filme <- filmes) {
+			   <option value="@filme.id">@filme.id - @filme.nome</option>
+			   }
+			</select>
+		  </td>
+		 </tr>
+		 <tr>
+		  <th>Escolha uma imagem para fazer upload:</th>
+		  <td>
+		      <input type="file" name="picture" class="form-control">
+		   </td>
+		  </tr>
+		  <tr>
+		    <td colspan="2">
+	          <input type="submit" class="btn btn-primary" value="Enviar imagem">
+	       </td>
+	      </tr>
+	      </table>
+		     }
       </div>
 
 }

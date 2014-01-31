@@ -2,12 +2,18 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import models.Diretor;
 import models.Filme;
+import play.Play;
 import play.data.Form;
 import play.mvc.Controller;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
 public class FilmeCRUD extends Controller {
@@ -68,6 +74,48 @@ public class FilmeCRUD extends Controller {
 		flash("sucesso","Registro gravado com sucesso");
 
 		return redirect(routes.FilmeCRUD.lista());
+
+	}
+
+	public static Result upload() {
+
+		MultipartFormData body = request().body().asMultipartFormData();
+		FilePart picture = body.getFile("picture");
+		String extensaoPadraoDeImagens = Play.application().configuration().getString("extensaoPadraoDeImagens");
+		if (picture != null) {
+
+			String filmeId = form().bindFromRequest().get("filmeId");
+			String imagem = filmeId + extensaoPadraoDeImagens;
+			String contentType = picture.getContentType();
+			File file = picture.getFile();
+
+			String diretorioDeImagens = Play.application().configuration().getString("diretorioDeImagens");
+			String contentTypePadraoDeImagens = Play.application().configuration().getString("contentTypePadraoDeImagens");
+
+			if (contentType.equals(contentTypePadraoDeImagens)) {
+
+				file.renameTo(new File(diretorioDeImagens,imagem));
+				return ok(views.html.upload.render("Arquivo  \"" + imagem + "\" do tipo [" + contentType + "] foi carregado com sucesso !"));
+
+			} else {
+
+				return ok(views.html.upload.render("Imagens apenas no formato \"" + contentTypePadraoDeImagens + "\" serão aceitas!"));
+
+			}
+
+		} else {
+			flash("error","Erro ao fazer upload");
+			return redirect(routes.Application.index());
+		}
+	}
+
+	public static Result imagem(Long id) throws IOException {
+
+		String diretorioDeImagens = Play.application().configuration().getString("diretorioDeImagens");
+
+		File imagem = new File(diretorioDeImagens,id + ".png");
+
+		return ok(new FileInputStream(imagem));
 
 	}
 
