@@ -1,1 +1,1 @@
-play debug run
+activator debug run

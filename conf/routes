@@ -1,32 +1,35 @@
 # Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
 
 # Home page
-# GET     /                                   controllers.Application.index()
-GET     /                           controllers.Inicio.index()
+# GET     /                               controllers.Application.index()
+GET     /                                    controllers.Inicio.index()
+GET     /sobre                          controllers.Application.sobre()
+GET     /play                             controllers.Application.index()
+
+GET     /diretor                         controllers.DiretorCRUD.lista()
+GET     /diretor/novo               controllers.DiretorCRUD.novoDiretor()
+GET     /diretor/:id                   controllers.DiretorCRUD.detalhar(id: Long)
+POST   /diretor/:id                   controllers.DiretorCRUD.alterar(id:Long)
+POST   /diretor/                        controllers.DiretorCRUD.gravar()
+POST   /diretor/:id/remover   controllers.DiretorCRUD.remover(id:Long)
+
+GET     /filme                            controllers.FilmeCRUD.lista()
+GET     /filme/novo                  controllers.FilmeCRUD.novoFilme()
+GET     /filme/:id                      controllers.FilmeCRUD.detalhar(id: Long)
+POST   /filme/:id                      controllers.FilmeCRUD.alterar(id:Long)
+POST   /filme/                           controllers.FilmeCRUD.gravar()
+POST   /filme/:id/remover      controllers.FilmeCRUD.remover(id:Long)
+
+POST   /filmesUpload              controllers.FilmeCRUD.upload()
+GET     /filmeImagem              controllers.FilmeCRUD.imagem(id:Long)
+
+GET     /filmesJSON                  controllers.Services.listaFilmesEmJSON()
+GET     /filmesXML                   controllers.Services.listaFilmesEmXML()
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file            controllers.Assets.at(path="/public", file)
-GET     /sobre                      controllers.Application.sobre()
-GET     /play                         controllers.Application.index()
+GET         /assets/*file               controllers.Assets.at(path="/public", file)
 
-GET     /diretor                    controllers.DiretorCRUD.lista()
-GET     /diretor/novo           controllers.DiretorCRUD.novoDiretor()
-GET     /diretor/:id               controllers.DiretorCRUD.detalhar(id: Long)
-POST   /diretor/:id              controllers.DiretorCRUD.alterar(id:Long)
-POST   /diretor/                     controllers.DiretorCRUD.gravar()
-POST   /diretor/:id/remover       controllers.DiretorCRUD.remover(id:Long)
-
-GET     /filme                    controllers.FilmeCRUD.lista()
-GET     /filme/novo           controllers.FilmeCRUD.novoFilme()
-GET     /filme/:id               controllers.FilmeCRUD.detalhar(id: Long)
-POST   /filme/:id              controllers.FilmeCRUD.alterar(id:Long)
-POST   /filme/                     controllers.FilmeCRUD.gravar()
-POST   /filme/:id/remover       controllers.FilmeCRUD.remover(id:Long)
-
-POST   /filmesUpload       controllers.FilmeCRUD.upload()
-GET     /filmeImagem       controllers.FilmeCRUD.imagem(id:Long)
-
-GET     /filmesJSON            controllers.Services.listaFilmesEmJSON()
-GET     /filmesXML             controllers.Services.listaFilmesEmXML()
+# Secure Social
+# User Registration and password handling
+->          /auth                             securesocial.Routes

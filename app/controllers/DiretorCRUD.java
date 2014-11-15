@@ -8,27 +8,41 @@ import models.Diretor;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
-import securesocial.core.Identity;
+import scala.Option;
+import securesocial.core.BasicProfile;
 import securesocial.core.java.SecureSocial;
+import securesocial.core.java.SecuredAction;
+import securesocial.core.java.UserAwareAction;
+import service.DemoUser;
 
 public class DiretorCRUD extends Controller {
 
 	private static final Form<Diretor> diretorForm = Form.form(Diretor.class);
 
-	@SecureSocial.UserAwareAction
+	@UserAwareAction
 	public static Result lista() {
 
-		List<Diretor> diretores = Diretor.find.findList();
+		List<Diretor> diretores = Diretor.find.orderBy("nome").findList();
 
-		Identity user = (Identity) ctx().args.get(SecureSocial.USER_KEY);
+		DemoUser user = (DemoUser) ctx().args.get(SecureSocial.USER_KEY);
 
-		final String userName = user != null ? user.fullName() : "guest";
+		String userName = "guest";
+
+		if (user != null) {
+			BasicProfile main = user.main;
+
+			if (main != null) {
+				Option<String> optUserName = main.fullName();
+				userName = optUserName.get();
+			}
+
+		}
 
 		return ok(views.html.diretor.render(diretores,userName));
 
 	}
 
-	@SecureSocial.SecuredAction
+	@SecuredAction
 	public static Result remover(Long id) {
 		try {
 			Diretor.find.ref(id).delete();
@@ -39,7 +53,7 @@ public class DiretorCRUD extends Controller {
 		return lista();
 	}
 
-	@SecureSocial.SecuredAction
+	@SecuredAction
 	public static Result novoDiretor() {
 
 		return ok(views.html.novoDiretor.render(diretorForm));
@@ -51,7 +65,7 @@ public class DiretorCRUD extends Controller {
 		return ok(views.html.alterarDiretor.render(id,dirForm));
 	}
 
-	@SecureSocial.SecuredAction
+	@SecuredAction
 	public static Result alterar(Long id) {
 		form(Diretor.class).fill(Diretor.find.byId(id));
 
@@ -64,7 +78,7 @@ public class DiretorCRUD extends Controller {
 
 	}
 
-	@SecureSocial.SecuredAction
+	@SecuredAction
 	public static Result gravar() {
 		Form<Diretor> form = diretorForm.bindFromRequest();
 		if (form.hasErrors()) {

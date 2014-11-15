@@ -12,7 +12,8 @@ public class Services extends Controller {
 	public static Result listaFilmesEmJSON() {
 
 		List<Filme> filmes = getFilmesOrderByAno();
-		return ok(Json.toJson(filmes));
+		String resultado = Json.toJson(filmes).toString();
+		return ok(resultado.substring(1,resultado.length() - 2));
 
 	}
 

@@ -16,67 +16,151 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import play.Application;
-import scala.Option;
-import securesocial.core.Identity;
-import securesocial.core.IdentityId;
+import play.Logger;
+import play.libs.F;
+import securesocial.core.BasicProfile;
+import securesocial.core.PasswordInfo;
 import securesocial.core.java.BaseUserService;
 import securesocial.core.java.Token;
+import securesocial.core.providers.UsernamePasswordProvider;
+import securesocial.core.services.SaveMode;
 
 /**
  * A Sample In Memory user service in Java
  * Note: This is NOT suitable for a production environment and is provided only as a guide.
  * A real implementation would persist things in a database
  */
-public class InMemoryUserService extends BaseUserService {
+public class InMemoryUserService extends BaseUserService<DemoUser> {
 
-	private final HashMap<String,Identity> users = new HashMap<String,Identity>();
+	public Logger.ALogger logger = play.Logger.of("application.service.InMemoryUserService");
+
+	private final HashMap<String,DemoUser> users = new HashMap<String,DemoUser>();
 	private final HashMap<String,Token> tokens = new HashMap<String,Token>();
 
-	public InMemoryUserService(Application application) {
-		super(application);
+	@Override
+	public F.Promise<DemoUser> doSave(BasicProfile profile,SaveMode mode) {
+		DemoUser result = null;
+		if (mode == SaveMode.SignUp()) {
+			result = new DemoUser(profile);
+			users.put(profile.providerId() + profile.userId(),result);
+		} else if (mode == SaveMode.LoggedIn()) {
+			for (Iterator<DemoUser> it = users.values().iterator() ; it.hasNext() && result == null ;) {
+				DemoUser user = it.next();
+				for (BasicProfile p : user.identities) {
+					if (p.userId().equals(profile.userId()) && p.providerId().equals(profile.providerId())) {
+						user.identities.remove(p);
+						user.identities.add(profile);
+						result = user;
+						break;
+					}
+				}
+			}
+		} else if (mode == SaveMode.PasswordChange()) {
+			for (Iterator<DemoUser> it = users.values().iterator() ; it.hasNext() && result == null ;) {
+				DemoUser user = it.next();
+				for (BasicProfile p : user.identities) {
+					if (p.userId().equals(profile.userId()) && p.providerId().equals(UsernamePasswordProvider.UsernamePassword())) {
+						user.identities.remove(p);
+						user.identities.add(profile);
+						result = user;
+						break;
+					}
+				}
+			}
+		} else {
+			throw new RuntimeException("Unknown mode");
+		}
+		return F.Promise.pure(result);
 	}
 
 	@Override
-	public Identity doSave(Identity user) {
-		users.put(user.identityId().userId() + user.identityId().providerId(),user);
-		// this sample returns the same user object, but you could return an instance of your own class
-		// here as long as it implements the Identity interface. This will allow you to use your own class in the
-		// protected actions and event callbacks. The same goes for the doFind(UserId userId) method.
-		return user;
-	}
+	public F.Promise<DemoUser> doLink(DemoUser current,BasicProfile to) {
+		DemoUser target = null;
 
-	@Override
-	public void doSave(Token token) {
-		tokens.put(token.uuid,token);
-	}
-
-	@Override
-	public Identity doFind(IdentityId userId) {
-		return users.get(userId.userId() + userId.providerId());
-	}
-
-	@Override
-	public Token doFindToken(String tokenId) {
-		return tokens.get(tokenId);
-	}
-
-	@Override
-	public Identity doFindByEmailAndProvider(String email,String providerId) {
-		Identity result = null;
-		for (Identity user : users.values()) {
-			Option<String> optionalEmail = user.email();
-			if (user.identityId().providerId().equals(providerId) && optionalEmail.isDefined() && optionalEmail.get().equalsIgnoreCase(email)) {
-				result = user;
+		for (DemoUser u : users.values()) {
+			if (u.main.providerId().equals(current.main.providerId()) && u.main.userId().equals(current.main.userId())) {
+				target = u;
 				break;
 			}
 		}
-		return result;
+
+		if (target == null) {
+			// this should not happen
+			throw new RuntimeException("Can't find user : " + current.main.userId());
+		}
+
+		boolean alreadyLinked = false;
+		for (BasicProfile p : target.identities) {
+			if (p.userId().equals(to.userId()) && p.providerId().equals(to.providerId())) {
+				alreadyLinked = true;
+				break;
+			}
+		}
+		if (!alreadyLinked) {
+			target.identities.add(to);
+		}
+		return F.Promise.pure(target);
 	}
 
 	@Override
-	public void doDeleteToken(String uuid) {
-		tokens.remove(uuid);
+	public F.Promise<Token> doSaveToken(Token token) {
+		tokens.put(token.uuid,token);
+		return F.Promise.pure(token);
+	}
+
+	@Override
+	public F.Promise<BasicProfile> doFind(String providerId,String userId) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Finding user " + userId);
+		}
+		BasicProfile found = null;
+
+		for (DemoUser u : users.values()) {
+			for (BasicProfile i : u.identities) {
+				if (i.providerId().equals(providerId) && i.userId().equals(userId)) {
+					found = i;
+					break;
+				}
+			}
+		}
+
+		return F.Promise.pure(found);
+	}
+
+	@Override
+	public F.Promise<PasswordInfo> doPasswordInfoFor(DemoUser user) {
+		throw new RuntimeException("doPasswordInfoFor is not implemented yet in sample app");
+	}
+
+	@Override
+	public F.Promise<BasicProfile> doUpdatePasswordInfo(DemoUser user,PasswordInfo info) {
+		throw new RuntimeException("doUpdatePasswordInfo is not implemented yet in sample app");
+	}
+
+	@Override
+	public F.Promise<Token> doFindToken(String tokenId) {
+		return F.Promise.pure(tokens.get(tokenId));
+	}
+
+	@Override
+	public F.Promise<BasicProfile> doFindByEmailAndProvider(String email,String providerId) {
+		BasicProfile found = null;
+
+		for (DemoUser u : users.values()) {
+			for (BasicProfile i : u.identities) {
+				if (i.providerId().equals(providerId) && i.email().isDefined() && i.email().get().equals(email)) {
+					found = i;
+					break;
+				}
+			}
+		}
+
+		return F.Promise.pure(found);
+	}
+
+	@Override
+	public F.Promise<Token> doDeleteToken(String uuid) {
+		return F.Promise.pure(tokens.remove(uuid));
 	}
 
 	@Override
