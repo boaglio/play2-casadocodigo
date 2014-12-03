@@ -2,8 +2,6 @@
 
 @main("Filmes") {
 
-<img src="http://localhost:9000/filmeImagem?id=32"/>
-
 <div id="fb-root"></div>
 <script>
   window.fbAsyncInit = function() {
@@ -43,8 +41,30 @@
   js = d.createElement(s); js.id = id;
   js.src = "//connect.facebook.net/pt_BR/all.js#xfbml=1&appId=260229664128047";
   fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+}(document, 'script', 'facebook-jssdk'));
 
+function curtir(id) {
+
+    $.ajax({
+        type: "GET",
+        async:false,
+        url: "/filme/curtir/"+id,
+        error: function (jqXHR, status) {
+        	window.alert("erro:"+status);
+        }
+    });
+
+    $.ajax({
+	    	type: "GET",
+	    	async:false,
+	    	 url: "/filme/curtidas/"+id
+	    }).then(function(data) {
+	       $('.curtidas'+id).html(data);
+	    });
+
+}
+
+</script>
 
     <div class="container">
     <div class="header">
@@ -63,6 +83,7 @@
 	            <th>dura&ccedil;&atilde;o</th>
 	            <th>g&ecirc;nero</th>
   	            <th>IMDB</th>
+  	            <th colspan="3">curtidas</th>
 	        </tr>
 
 	      @for(filme <- filmes) {
@@ -72,11 +93,13 @@
 	             <a href="@routes.FilmeCRUD.detalhar(filme.id)">@filme.nome</a>
 	             <img src="@routes.FilmeCRUD.imagem(filme.id)" alt="">
 	            </td>
-	            <td><a href="@routes.FilmeCRUD.detalhar(filme.id)">@filme.nome</a></td>
  	            <td>@filme.diretor</td>
 	            <td>@filme.duracao</td>
 	            <td>@filme.genero</td>
-  	            <td nowrap="nowrap"><a href="@filme.url" target="_BLANK">nota: @filme.nota com @filme.votos votos</td>
+  	            <td style="white-space: nowrap;"><a href="@filme.url" target="_BLANK">nota: @filme.nota com @filme.votos votos</a></td>
+  	            <td><img align="middle" width="50px" src="@routes.Assets.at("images/joia.png")" alt="curtidas"/></td>
+  	            <td style="white-space: nowrap;"><div class="curtidas@filme.id">@filme.curtidas</div></td>
+  	            <td nowrap="nowrap"><a class="btn btn-lg btn-success"  onclick="curtir(@filme.id)" href="#"> curtir ! </a></td>
 	        </tr>
 	             }
 	    </tfoot>

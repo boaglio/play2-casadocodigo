@@ -19,12 +19,16 @@ GET     /filme/:id                      controllers.FilmeCRUD.detalhar(id: Long)
 POST   /filme/:id                      controllers.FilmeCRUD.alterar(id:Long)
 POST   /filme/                           controllers.FilmeCRUD.gravar()
 POST   /filme/:id/remover      controllers.FilmeCRUD.remover(id:Long)
+GET     /filme/curtir/:id            controllers.FilmeCRUD.curtir(id:Long)
+GET     /filme/curtidas/:id       controllers.FilmeCRUD.curtidas(id:Long)
 
 POST   /filmesUpload              controllers.FilmeCRUD.upload()
 GET     /filmeImagem              controllers.FilmeCRUD.imagem(id:Long)
 
 GET     /filmesJSON                  controllers.Services.listaFilmesEmJSON()
 GET     /filmesXML                   controllers.Services.listaFilmesEmXML()
+GET     /filmes                           controllers.Services.listaFilmes(tipo:String)
+GET     /filmes/:tipo                  controllers.Services.listaFilmes(tipo:String)
 
 
 # Map static resources from the /public folder to the /assets URL path

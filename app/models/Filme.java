@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
@@ -37,8 +38,13 @@ public class Filme extends Model {
 
 	public String url;
 
+	public Long curtidas;
+
 	@ManyToOne
 	public Diretor diretor;
+
+	@Version
+	public int version;
 
 	public static Model.Finder<Long,Filme> find = new Model.Finder<Long,Filme>(Long.class,Filme.class);
 
@@ -51,9 +57,17 @@ public class Filme extends Model {
 		return options;
 	}
 
+	public void curtir() {
+		if (curtidas != null) {
+			curtidas++;
+		} else {
+			curtidas = 1l;
+		}
+	}
+
 	@Override
 	public String toString() {
-		return nome;
+		return "Filme [id=" + id + ", nome=" + nome + ", tipo=" + tipo + ", nota=" + nota + ", duracao=" + duracao + ", ano=" + ano + ", genero=" + genero + ", votos=" + votos + ", url=" + url + ", curtidas=" + curtidas + ", diretor=" + diretor + "]";
 	}
 
 }

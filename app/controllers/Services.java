@@ -24,6 +24,21 @@ public class Services extends Controller {
 
 	}
 
+	public static Result listaFilmes(String tipo) {
+
+		if (tipo.equalsIgnoreCase("xml")) {
+			return listaFilmesEmXML();
+		} else {
+			return listaFilmesEmJSON();
+		}
+
+	}
+
+	public static Result curtir(Long filmeId) {
+
+		return ok();
+	}
+
 	private static List<Filme> getFilmesOrderByAno() {
 		return Filme.find.where().orderBy("ano").findList();
 	}

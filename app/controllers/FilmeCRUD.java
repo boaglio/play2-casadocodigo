@@ -18,7 +18,7 @@ import play.mvc.Result;
 
 public class FilmeCRUD extends Controller {
 
-	private static final Form<Filme> filmeForm = Form.form(Filme.class);
+	private static Form<Filme> filmeForm = Form.form(Filme.class);
 
 	public static Result lista() {
 		List<Filme> filmes = Filme.find.where().orderBy("ano").findList();
@@ -54,6 +54,33 @@ public class FilmeCRUD extends Controller {
 		flash("sucesso","Filme " + alterarForm.get().nome + " alterado com sucesso");
 
 		return redirect(routes.FilmeCRUD.lista());
+
+	}
+
+	public static Result curtir(Long id) {
+
+		Filme filme = Filme.find.byId(id);
+
+		filme.curtir();
+
+		filme.update();
+
+		return ok();
+	}
+
+	public static Result curtidas(Long id) {
+
+		Filme filme = Filme.find.byId(id);
+
+		String mensagem = null;
+
+		if (filme.curtidas == 1) {
+			mensagem = "uma pessoa curtiu esse filme";
+		} else {
+			mensagem = filme.curtidas + " pessoas curtiram esse filme";
+		}
+
+		return ok(mensagem);
 
 	}
 
